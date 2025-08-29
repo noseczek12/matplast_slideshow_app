@@ -1,16 +1,32 @@
-# docker-compose.yml
+# OSTATECZNA WERSJA docker-compose.yml
 services:
-  # Nazwa serwisu - może być dowolna
-  matplast-slideshow-app: 
-    # Nazwa kontenera, która pojawi się w Dockerze
+  matplast-slideshow-app:
     container_name: matplast-slideshow
-    # Polityka restartu - uruchom ponownie, chyba że ręcznie zatrzymany
     restart: unless-stopped
-    # Buduj obraz z tego samego folderu, używając pliku Dockerfile
     build: .
     ports:
-      # Mapowanie portów: port_na_serwerze:port_w_kontenerze
       - "8080:5000"
     volumes:
-      # Mapowanie folderu ze zdjęciami
       - "/DATA/AppData/matplast-slideshow/images:/app/static/images"
+
+    # Metadane wymagane przez App Store w CasaOS
+    x-casaos:
+      architectures:
+        - amd64
+        - arm64
+      main: matplast-slideshow-app
+      description:
+        en_us: A synchronized photo slideshow kiosk for company screens.
+        pl_pl: Zsynchronizowany kiosk do pokazu zdjęć na firmowych ekranach.
+      tagline:
+        en_us: Photo Slideshow Kiosk
+        pl_pl: Kiosk z pokazem zdjęć
+      developer: "noseczek12"
+      author: "noseczek12"
+      icon: "https://cdn.icon-icons.com/icons2/2090/PNG/512/slideshow_icon_128362.png"
+      thumbnail: ""
+      title:
+        en_us: Matplast Slideshow
+        pl_pl: Pokaz slajdów Matplast
+      category: "Custom"
+      port_map: "8080" # Port, który będzie używany do otwierania interfejsu
