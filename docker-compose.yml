@@ -1,11 +1,16 @@
-version: '3.8'
-
+# docker-compose.yml
 services:
-  kiosk-app:
-    build: .
-    container_name: slideshow
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./static/uploads:/app/static/uploads
+  # Nazwa serwisu - może być dowolna
+  matplast-slideshow-app: 
+    # Nazwa kontenera, która pojawi się w Dockerze
+    container_name: matplast-slideshow
+    # Polityka restartu - uruchom ponownie, chyba że ręcznie zatrzymany
     restart: unless-stopped
+    # Buduj obraz z tego samego folderu, używając pliku Dockerfile
+    build: .
+    ports:
+      # Mapowanie portów: port_na_serwerze:port_w_kontenerze
+      - "8080:5000"
+    volumes:
+      # Mapowanie folderu ze zdjęciami
+      - "/DATA/AppData/matplast-slideshow/images:/app/static/images"
