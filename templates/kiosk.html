@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Pokaz zdjęć</title>
+  <style>
+    body { margin: 0; background: black; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    img { max-width: 100vw; max-height: 100vh; object-fit: contain; }
+  </style>
+</head>
+<body>
+  <img id="slideshow" src="" alt="Slideshow">
+  <script>
+    let images = [];
+    let index = 0;
+    let lastHash = '';
+
+    async function loadImages() {
+      const res = await fetch('/api/images');
+      images = await res.json();
+      if (images.length > 0) showImage();
+      lastHash = JSON.stringify(images.map(url => url)); // uproszczony hash
+    }
+
+    function showImage() {
+      if (images.length === 0) return;
+      const img = document.getElementById('slideshow');
+      img.src = images[index];
+      index = (index + 1) % images.length;
+    }
+
+    async function checkForUpdates() {
+      const res = await fetch('/api/images');
+      const current = await res.json();
+      const currentHash = JSON.stringify(current.map(url => url));
+      if (currentHash !== lastHash) {
+        location.reload(); // zmiana wykryta, odśwież stronę
+      }
+    }
+
+    // Pokaz slajdów co 5 sekund
+    setInterval(showImage, 5000);
+
+    // Sprawdzanie zmian co 30 sekund
+    setInterval(checkForUpdates, 5000);
+
+    loadImages();
+  </script>
+</body>
+</html>
