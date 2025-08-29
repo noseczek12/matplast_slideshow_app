@@ -1,20 +1,23 @@
-# OSTATECZNA WERSJA docker-compose.yml
+# Slideshow/docker-compose.yml
 services:
-  matplast-slideshow-app:
+  # 1. ZMIANA: Nazwa serwisu musi być taka sama jak nazwa folderu -> "Slideshow"
+  Slideshow:
     container_name: matplast-slideshow
     restart: unless-stopped
-    build: .
+    # 2. ZMIANA: Kontekst budowania musi wskazywać na folder nadrzędny (..),
+    # gdzie znajduje się plik Dockerfile
+    build: .. 
     ports:
       - "8080:5000"
     volumes:
       - "/DATA/AppData/matplast-slideshow/images:/app/static/images"
     
-    # Metadane wymagane przez App Store w CasaOS
     x-casaos:
       architectures:
         - amd64
         - arm64
-      main: matplast-slideshow-app
+      # ZMIANA: "main" musi wskazywać na nową nazwę serwisu
+      main: Slideshow
       description:
         en_us: A synchronized photo slideshow kiosk for company screens.
         pl_pl: Zsynchronizowany kiosk do pokazu zdjęć na firmowych ekranach.
