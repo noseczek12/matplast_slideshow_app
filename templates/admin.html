@@ -1,55 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Panel administracyjny</title>
-  <style>
-    body { font-family: sans-serif; margin: 40px; }
-    img { max-height: 100px; margin: 5px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administratora</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <h1>Dodaj zdjęcie</h1>
-  <form id="uploadForm">
-    <input type="file" name="file" required>
-    <button type="submit">Wyślij</button>
-  </form>
+    <div class="admin-container">
+        <h1>Panel Zarządzania Pokazem Slajdów</h1>
 
-  <h2>Lista zdjęć</h2>
-  <div id="gallery"></div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
 
-  <script>
-    async function loadGallery() {
-      const res = await fetch('/api/images');
-      const images = await res.json();
-      const gallery = document.getElementById('gallery');
-      gallery.innerHTML = '';
-      images.forEach(src => {
-        const img = document.createElement('img');
-        img.src = src;
-        const btn = document.createElement('button');
-        btn.textContent = 'Usuń';
-        btn.onclick = async () => {
-          const filename = src.split('/').pop();
-          await fetch(`/api/delete/${filename}`, { method: 'DELETE' });
-          loadGallery();
-        };
-        const container = document.createElement('div');
-        container.appendChild(img);
-        container.appendChild(btn);
-        gallery.appendChild(container);
-      });
-    }
+        <div class="card">
+            <h2>Dodaj nowe zdjęcie</h2>
+            <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" accept="image/*" required>
+                <button type="submit">Wgraj zdjęcie</button>
+            </form>
+        </div>
 
-    document.getElementById('uploadForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      await fetch('/api/upload', { method: 'POST', body: formData });
-      e.target.reset();
-      loadGallery();
-    };
-
-    loadGallery();
-  </script>
+        <div class="card">
+            <h2>Obecne zdjęcia w pokazie ({{ photos|length }})</h2>
+            <div class="image-gallery">
+                {% for photo in photos %}
+                    <div class="gallery-item">
+                        <img src="{{ url_for('static', filename='images/' + photo) }}" alt="{{ photo }}">
+                        <p>{{ photo }}</p>
+                        <form action="{{ url_for('delete_file', filename=photo) }}" method="post" onsubmit="return confirm('Czy na pewno chcesz usunąć to zdjęcie?');">
+                            <button type="submit" class="delete-btn">Usuń</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <p>Brak zdjęć w pokazie. Dodaj pierwsze zdjęcie, aby rozpocząć.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </body>
 </html>
