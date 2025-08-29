@@ -8,7 +8,7 @@ services:
       - "8080:5000"
     volumes:
       - "/DATA/AppData/matplast-slideshow/images:/app/static/images"
-
+    
     # Metadane wymagane przez App Store w CasaOS
     x-casaos:
       architectures:
@@ -29,4 +29,4 @@ services:
         en_us: Matplast Slideshow
         pl_pl: Pokaz slajdów Matplast
       category: "Custom"
-      port_map: "8080" # Port, który będzie używany do otwierania interfejsu
+      port_map: "8080"
